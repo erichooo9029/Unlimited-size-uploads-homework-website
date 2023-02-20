@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_blank">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>上傳</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <style>
+      .disclaimer{width: 480px; color:#646464;margin:20px auto;padding:0 16px;text-align:center;font:400 12px Roboto,Helvetica,Arial,sans-serif}.disclaimer a{color:#009688}#credit{display:none}
+    </style>
+  </head>
+  <body>
+
+
+
+    <form class="main" id="form" novalidate="novalidate" style="max-width: 480px;margin: 40px auto;">
+      <div id="forminner">
+        <div class="row">
+          <div class="col s12">
+            <h5 class="center-align teal-text">上傳資料到老師的 Google Drive</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="name" type="text" name="Name" class="validate" required="" aria-required="true">
+            <label for="name">Name</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="studentid" type="text" name="StudentID" class="validate" required="" aria-required="true">
+            <label for="studentid">系級和學號</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="homeworkname" type="text" name="Email" class="validate" required="" aria-required="true">
+            <label for="homeworkname">作業名稱</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="message" type="text" name="Message" class="validate" required="" aria-required="true">
+            <label for="message">給老師的留言</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="file-field input-field col s12">
+            <div class="btn">
+              <span>File</span>
+              <input id="files" type="file">
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text" placeholder="選擇你電腦上要上傳的資料">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <button class="waves-effect waves-light btn submit-btn" type="submit" onclick="submitForm(); return false;">上傳</button>
+          </div>          
+        </div>
+        <div class="row">
+          <div class="input-field col s12" id = "progress">
+          </div>
+        </div>
+      </div>
+      <div id="success" style="display:none">
+        <h5 class="left-align teal-text">上傳成功</h5>
+        <p>你的檔案上傳成功啦~~~</p>
+        <p>已經傳Line到群組了</p>     
+        <p class="center-align"><a  class="btn btn-large" href="https://drive.google.com/drive/folders/1FFGScUAd_noZOJOUFyQ9LlFztt26TqdW?usp=sharing" target="_blank">前往上傳的資料夾</a></p>
+      </div>
+    </form>
+
+    <div class="fixed-action-btn horizontal" style="bottom: 45px; right: 24px;">
+      <a class="btn-floating btn-large red">
+        <i class="large material-icons">menu</i>
+      </a>
+      <ul>
+        <li><a class="btn-floating red"  href="https://cn.pornhub.com/" target="_blank" title="Buy License - File Upload Form"><i class="material-icons">monetization_on</i></a></li>
+        <li><a class="btn-floating blue"  href="https://cn.pornhub.com/" target="_blank" title="Video Tutorial"><i class="material-icons">video_library</i></a></li>
+        <li><a class="btn-floating green" href="https://cn.pornhub.com/" target="_blank" title="How to Create File Upload Forms"><i class="material-icons">help</i></a></li>
+      </ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+
+    <script>
+
+      var file, 
+          reader = new FileReader();
+
+      reader.onloadend = function(e) {
+        if (e.target.error != null) {
+          showError("檔案名: " + file.name + " 無法被讀取");
+          return;
+        } else {
+        
+          google.script.run
+            .withSuccessHandler(showSuccess)
+            .uploadFileToGoogleDrive(e.target.result, file.name, $('input#name').val(), $('input#homeworkname').val(), $('input#studentid').val(), $('input#message').val());
+        }
+      };
+
+      function showSuccess(e) {
+        if (e === "OK") { 
+          $('#forminner').hide();
+          $('#success').show();
+        } else {
+          showError(e);
+        }
+      }
+      function submitForm() {
+      
+        var files = $('#files')[0].files;
+
+         if (files.length === 0) {
+          showError("請選擇要上傳的檔案");
+          return;
+        }
+
+        file = files[0];
+
+        //if (file.size > 1024 * 1024 * 5) {
+          //showError("The file size should be < 5 MB");
+         //return;
+       // }//
+        showMessage("上傳中");
+        
+        reader.readAsDataURL(file);
+        
+      }
+
+      function showError(e) {
+        $('#progress').addClass('red-text').html(e);
+      }
+
+      function showMessage(e) {
+        $('#progress').removeClass('red-text').html(e);
+      }
+      
+
+
+    </script>
+
+  </body>
+
+</html>
